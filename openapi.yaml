@@ -23,7 +23,7 @@ info:
     | **401** | Токен відсутній або недійсний. / Token is missing or invalid. |
     | **404** | Ім'я методу для контрагента не визначено. / Method for the specified counterparty is not defined. |
     | **500** | Невідома помилка сервера. / Unidentified server error. |
-  version: 1.0.0
+  version: 1.0.1
   contact:
     name: API Support
   x-logo:
