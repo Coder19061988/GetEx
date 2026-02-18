@@ -1,70 +1,177 @@
 openapi: 3.0.3
 info:
   title: GetEx API
-  description: Документація REST API проекту GetEx (з Postman-колекції GetEX)
+  description: |
+    Документація REST API проекту GetEx.
+
+    ## Авторизація
+
+    Потрібно передавати токен у **заголовку запиту** `token`.
+
+    | Параметр   | Значення |
+    | ---------- | -------- |
+    | Заголовок  | `token`  |
+    | Формат     | Рядок токена, виданий для вашого облікового запису |
+
+    Метод **GET /ping** не вимагає авторизації.
+
+    **Коди помилок API (відповідність з 1С):**
+
+    | Код | Опис |
+    | --- | ---- |
+    | **400** | Відсутній обов'язковий заголовок: token. / Missing required header: token. |
+    | **401** | Токен відсутній або недійсний. / Token is missing or invalid. |
+    | **404** | Ім'я методу для контрагента не визначено. / Method for the specified counterparty is not defined. |
+    | **500** | Невідома помилка сервера. / Unidentified server error. |
   version: 1.0.0
   contact:
     name: API Support
+  x-logo:
+    url: getex-logo-v2.png
+    altText: GetEx API
+    backgroundColor: "#FFFFFF"
 
 servers:
-  - url: https://exchange.bhb.org.ua
+  - url: https://exchange.bhb.org.ua/hs/exchange
     description: Продакшн (production)
 
 tags:
-  - name: health
-    description: Перевірка доступності (без логіну)
-  - name: price
-    description: Ціни
+  - name: Методи API
+    
 
 paths:
   /ping:
     get:
       tags:
-        - health
-      summary: ping (без логіну)
-      description: Перевірка доступності API. У заголовку можна передати тестовий token (наприклад 123).
+        - Методи API
+      summary: ping
+      description: |
+        Перевірка доступності API. Повертає рядок `pong`. Авторизація не потрібна.
+
+        **Приклад запиту:**
+        ```bash
+        curl -X GET https://exchange.bhb.org.ua/hs/exchange/ping
+        ```
       operationId: ping
       security: []
-      parameters:
-        - name: token
-          in: header
-          description: Тестовий або необов'язковий токен для ping
-          schema:
-            type: string
-            example: "123"
       responses:
         '200':
-          description: Сервіс доступний
+          description: Сервіс доступний. Тіло відповіді — рядок `pong`.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "pong"
+              example: "pong"
 
   /getPrice:
     get:
       tags:
-        - price
+        - Методи API
       summary: Отримати ціну
-      description: Повертає ціну. Потрібен валідний токен авторизації в заголовку token.
+      description: |
+        Повертає масив позицій прайсу. Потрібен валідний токен (заголовок `token`).
+
+        **Приклад запиту:**
+        ```bash
+        curl -X GET https://exchange.bhb.org.ua/hs/exchange/getPrice \
+          -H "token: YOUR_TOKEN"
+        ```
       operationId: getPrice
-      parameters:
-        - name: token
-          in: header
-          required: true
-          description: Токен авторизації
-          schema:
-            type: string
-            example: "f076cd64-9c8c-11e4-aa71-60a44c08b92b"
       responses:
         '200':
-          description: Успішна відповідь з ціною
+          description: Масив позицій прайсу
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PriceItem'
+              example:
+                - product_id: "550e8400-e29b-41d4-a716-446655440000"
+                  product_code: "УТРА0096107"
+                  barcode: "8588009351047"
+                  name: "Товар 1"
+                  category: "Сироватка для волосся"
+                  vendor: "Ельфа"
+                  trademark: "The Doctor"
+                  brend: ""
+                  uktzed: "3305900000"
+                  amount: 0
+                  price: 61.32
+                  retail_price: 61.32
+                - product_id: "550e8400-e29b-41d4-a716-446655440001"
+                  product_code: "УТРА0094155"
+                  barcode: "8588006041668"
+                  name: "Товар 2"
+                  category: "Бальзами"
+                  vendor: "Ельфа"
+                  trademark: "The Doctor"
+                  brend: ""
+                  uktzed: "3305900000"
+                  amount: 6
+                  price: 127.56
+                  retail_price: 127.56
+        '400':
+          description: Відсутній обов'язковий заголовок token. / Missing required header token.
         '401':
-          description: Невалідний або відсутній токен
+          description: Токен відсутній або недійсний. / Token is missing or invalid.
+        '404':
+          description: Ім'я методу для контрагента не визначено. / Method for the specified counterparty is not defined.
+        '500':
+          description: Невідома помилка сервера. / Unidentified server error.
 
 components:
-  schemas: {}
+  schemas:
+    PriceItem:
+      type: object
+      description: Позиція прайсу (відповідає структурі з модуля 1С)
+      properties:
+        product_id:
+          type: string
+          description: UID номенклатури (УникальныйИдентификатор)
+        product_code:
+          type: string
+          description: Код картки номенклатури
+        barcode:
+          type: string
+          description: Штрихкод номенклатури
+        name:
+          type: string
+          description: Повна назва номенклатури
+        category:
+          type: string
+          description: Категорія товару
+        vendor:
+          type: string
+          description: Виробник
+        trademark:
+          type: string
+          description: Торгова марка
+        brend:
+          type: string
+          description: Бренд
+        uktzed:
+          type: string
+          description: Код продукту згідно з УКТЗЕД (СокрЛП)
+        amount:
+          type: number
+          description: Кількість на залишку
+        price:
+          type: number
+          description: Ціна з ПДВ
+        retail_price:
+          type: number
+          description: Рекомендована роздрібна ціна
   securitySchemes:
     tokenHeader:
       type: apiKey
       in: header
       name: token
-      description: Токен авторизації для захищених методів (наприклад getPrice)
+      description: |
+        **Авторизація по токену**
+
+        Додайте заголовок `token` до запиту з значенням вашого токена.
 
 security:
   - tokenHeader: []
