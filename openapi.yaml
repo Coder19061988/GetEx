@@ -13,16 +13,7 @@ info:
     | Заголовок  | `token`  |
     | Формат     | Рядок токена, виданий для вашого облікового запису |
 
-    Метод **GET /ping** не вимагає авторизації.
-
-    **Коди помилок API (відповідність з 1С):**
-
-    | Код | Опис |
-    | --- | ---- |
-    | **400** | Відсутній обов'язковий заголовок: token. / Missing required header: token. |
-    | **401** | Токен відсутній або недійсний. / Token is missing or invalid. |
-    | **404** | Ім'я методу для контрагента не визначено. / Method for the specified counterparty is not defined. |
-    | **500** | Невідома помилка сервера. / Unidentified server error. |
+    
   version: 1.0.1
   contact:
     name: API Support
