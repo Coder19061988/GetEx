@@ -1,0 +1,5 @@
+# Уніфікація закінчень рядків: LF для коду та YAML (кросплатформність)
+* text=auto
+*.yaml text eol=lf
+*.yml text eol=lf
+*.html text eol=lf
