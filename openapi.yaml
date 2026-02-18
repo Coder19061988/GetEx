@@ -1,0 +1,70 @@
+openapi: 3.0.3
+info:
+  title: GetEx API
+  description: Документація REST API проекту GetEx (з Postman-колекції GetEX)
+  version: 1.0.0
+  contact:
+    name: API Support
+
+servers:
+  - url: https://exchange.bhb.org.ua
+    description: Продакшн (production)
+
+tags:
+  - name: health
+    description: Перевірка доступності (без логіну)
+  - name: price
+    description: Ціни
+
+paths:
+  /ping:
+    get:
+      tags:
+        - health
+      summary: ping (без логіну)
+      description: Перевірка доступності API. У заголовку можна передати тестовий token (наприклад 123).
+      operationId: ping
+      security: []
+      parameters:
+        - name: token
+          in: header
+          description: Тестовий або необов'язковий токен для ping
+          schema:
+            type: string
+            example: "123"
+      responses:
+        '200':
+          description: Сервіс доступний
+
+  /getPrice:
+    get:
+      tags:
+        - price
+      summary: Отримати ціну
+      description: Повертає ціну. Потрібен валідний токен авторизації в заголовку token.
+      operationId: getPrice
+      parameters:
+        - name: token
+          in: header
+          required: true
+          description: Токен авторизації
+          schema:
+            type: string
+            example: "f076cd64-9c8c-11e4-aa71-60a44c08b92b"
+      responses:
+        '200':
+          description: Успішна відповідь з ціною
+        '401':
+          description: Невалідний або відсутній токен
+
+components:
+  schemas: {}
+  securitySchemes:
+    tokenHeader:
+      type: apiKey
+      in: header
+      name: token
+      description: Токен авторизації для захищених методів (наприклад getPrice)
+
+security:
+  - tokenHeader: []
