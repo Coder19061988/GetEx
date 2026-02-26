@@ -14,7 +14,7 @@ info:
     | Формат     | Рядок токена, виданий для вашого облікового запису |
 
     
-  version: 1.0.1
+  version: 1.0.2
   contact:
     name: API Support
   x-logo:
@@ -79,30 +79,36 @@ paths:
                 items:
                   $ref: '#/components/schemas/PriceItem'
               example:
-                - product_id: "550e8400-e29b-41d4-a716-446655440000"
-                  product_code: "УТРА0096107"
-                  barcode: "8588009351047"
-                  name: "Товар 1"
-                  category: "Сироватка для волосся"
+                - product_id: "53149a6a-1688-11ee-a241-00505685ce63"
+                  product_code: "УТРА0097506"
+                  buyer_code: ""
+                  buyer_barcode: ""
+                  name: "Chisto Пакети для льоду 240 кубиків"
+                  category: "Пакети для зберігання харчових продуктів"
+                  vendor: "Чисто"
+                  trademark: "Chisto"
+                  brend: "Чисто"
+                  uktzed: "3923210000"
+                  amount: 391
+                  price: 33.63
+                  retail_price: 0
+                  barcodes:
+                    - "4823098414414"
+                - product_id: "e0e00312-f638-11e5-b5f8-000c2942d205"
+                  product_code: "УТРА0035753"
+                  buyer_code: ""
+                  buyer_barcode: "4820168431630, 4820168431625"
+                  name: "Чистюня Засіб для чистки \"Сантри\" 1л"
+                  category: "Засіб для чищення унітазів"
                   vendor: "Ельфа"
-                  trademark: "The Doctor"
-                  brend: ""
-                  uktzed: "3305900000"
-                  amount: 0
-                  price: 61.32
-                  retail_price: 61.32
-                - product_id: "550e8400-e29b-41d4-a716-446655440001"
-                  product_code: "УТРА0094155"
-                  barcode: "8588006041668"
-                  name: "Товар 2"
-                  category: "Бальзами"
-                  vendor: "Ельфа"
-                  trademark: "The Doctor"
-                  brend: ""
-                  uktzed: "3305900000"
-                  amount: 6
-                  price: 127.56
-                  retail_price: 127.56
+                  trademark: "Чистюня"
+                  brend: "Чистюня"
+                  uktzed: "3402509000"
+                  amount: 136
+                  price: 59.21
+                  retail_price: 0
+                  barcodes:
+                    - "4820168431630"
         '400':
           description: Відсутній обов'язковий заголовок token. / Missing required header token.
         '401':
@@ -124,9 +130,12 @@ components:
         product_code:
           type: string
           description: Код картки номенклатури
-        barcode:
+        buyer_code:
           type: string
-          description: Штрихкод номенклатури
+          description: Код номенклатури контрагента (покупця)
+        buyer_barcode:
+          type: string
+          description: Штрихкод номенклатури контрагента (покупця), може бути кілька через кому
         name:
           type: string
           description: Повна назва номенклатури
@@ -154,6 +163,11 @@ components:
         retail_price:
           type: number
           description: Рекомендована роздрібна ціна
+        barcodes:
+          type: array
+          items:
+            type: string
+          description: Масив штрихкодів номенклатури (РегистрСведений.Штрихкоды)
   securitySchemes:
     tokenHeader:
       type: apiKey
